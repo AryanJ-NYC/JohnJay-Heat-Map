@@ -21,6 +21,7 @@ function mapController($scope, leafletData, FloorDataService, MapInteractionServ
         MapInteractionService.addMarkersToMap(self.defaultDate);
     });
 
+    // gets floor data on floor change
     leafletData.getMap('map').then(function (map) {
         map.on('baselayerchange', function (layer) {
             MapInteractionService.removeMarkersFromMap();

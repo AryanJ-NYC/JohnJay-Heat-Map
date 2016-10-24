@@ -31,8 +31,7 @@
   },
   "scripts": {
     "start": "node node/server.js",
-    "cisdd-start": "nodejs node/server.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "cisdd-start": "nodejs node/server.js"
   },
   "author": "",
   "license": "ISC"
