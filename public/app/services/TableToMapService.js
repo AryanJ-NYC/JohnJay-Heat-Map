@@ -1,4 +1,4 @@
-// service for table to map communication
+// service for color table to map communication
 app.service('TableToMapService', function() {
     var self = this;
 

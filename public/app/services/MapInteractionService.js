@@ -14,7 +14,7 @@ app.service('MapInteractionService', function (TableToMapService, FloorDataServi
             for (var vav in FloorDataService.vavs) {
 
                 // if the currentDate is in that vav set
-                if (date in FloorDataService.roomData[vav]) {
+                if (date in FloorDataService.roomTempData[vav]) {
 
                     // get the markerValue of that vav
                     var markerValue = self.getMarkerValue(vav, date);
@@ -80,7 +80,7 @@ app.service('MapInteractionService', function (TableToMapService, FloorDataServi
     };
 
     self.getMarkerValue = function (vav, date) {
-        var roomTemp = FloorDataService.roomData[vav][date];
+        var roomTemp = FloorDataService.roomTempData[vav][date];
         if ($rootScope.marker_options == 'Temp') {
             return roomTemp;
         } else if ($rootScope.marker_options == 'Temp: Inside Vs Outside') {
