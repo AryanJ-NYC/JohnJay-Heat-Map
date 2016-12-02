@@ -23,11 +23,14 @@ app.service('MapInteractionService', function (TableToMapService, FloorDataServi
           // get the room setpoint of that vav
           var roomSetpoint = self.getRoomSetpoint(vav, date);
 
+          // get the damper angle of that vav
+          var damperAngle = self.getDamperAngle(vav, date);
+
           // go through rooms in vav box and add markers to map
           for (var i = 0; i < FloorDataService.vavs[vav].length; i++) {
 
             var coordinates = FloorDataService.roomCoordinates[FloorDataService.vavs[vav][i]];
-            var layer = self.getMarkerType(coordinates, color, temp, roomSetpoint, map.getZoom());
+            var layer = self.getMarkerType(coordinates, color, temp, roomSetpoint, damperAngle, map.getZoom());
 
             if (!self.vectorLayers.hasOwnProperty(vav)) {
               self.vectorLayers[vav] = [];
@@ -55,16 +58,19 @@ app.service('MapInteractionService', function (TableToMapService, FloorDataServi
     });
   };
 
-  self.getMarkerType = function (coordinates, color, currentTemp, currentSetpoint, zoom) {
+  self.getMarkerType = function (coordinates, color, currentTemp, currentSetpoint, damperAngle, zoom) {
     var degreeSign = String.fromCharCode(parseInt("00B0", 16));
     var popup = 'Current Temp: ' + currentTemp + degreeSign;
     if (currentSetpoint) {
       popup += '<br/>Setpoint: ' + currentSetpoint + degreeSign;
     }
+    if (damperAngle) {
+      popup += '<br/>Damper Angle: ' + damperAngle + degreeSign;
+    }
 
     var object = {
       color: color,
-      fillOpacity: .5
+      fillOpacity: .5,
     };
 
     if ($rootScope.marker_type === 'Circles') {
@@ -98,5 +104,10 @@ app.service('MapInteractionService', function (TableToMapService, FloorDataServi
   self.getRoomSetpoint = function (vav, date) {
     var roomSetpoint = FloorDataService.roomSetpointData[vav][date];
     return roomSetpoint;
+  };
+
+  self.getDamperAngle = function (vav, date) {
+    var damperAngle = FloorDataService.damperAngles[vav][date];
+    return damperAngle;
   };
 });

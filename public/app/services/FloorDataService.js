@@ -6,6 +6,7 @@ app.service('FloorDataService', function (LoadingService, $http, $q) {
 
   self.roomTempData = {};    // {vav: {date: temp, ...}, vav: {date: temp, ...}} (all room data for said floor)
   self.roomSetpointData = {}; // {vav: {date: setpoint, ... }, vav: {date: setpoint, .. }} (all setpoints for said floor)
+  self.damperAngles = {}; // {vav: {date: angle, ... }, vav: {date: angle, .. }} (all angles for said floor)
   self.roomCoordinates = {}; // {"10.65.06": [[601,  59], [636, 82]], ...}
   self.vavs = {};            // {"47102": ["10.S.J"], ...}
 
@@ -26,21 +27,28 @@ app.service('FloorDataService', function (LoadingService, $http, $q) {
   * @param {string} floorLevel - floor_{roomNumber}
   * @returns {*|Promise.<TResult>}
   */
-  self.getAllData = function (floorLevel) {
-    const floorNumber = floorLevel.match(/\d+/g)[0];
+  self.getRoomData = function (floorLevel) {
+    var floorNumber = floorLevel.match(/\d+/g)[0];
     return $http.get(`http://bpl.dev.cisdd.org/api/floor-data/${floorNumber}/vavs`).then(function(response) {
-      const roomTemps = response.data.vavs.filter(function (vav) {
+      var roomTemps = response.data.vavs.filter(function (vav) {
         return vav.sensorType === 'Room Temperature';
       });
       roomTemps.forEach(function (roomTemp) {
         self.roomTempData[roomTemp.sensorDeviceId] = roomTemp.data;
       });
 
-      const roomSetpoints = response.data.vavs.filter(function (vav) {
+      var roomSetpoints = response.data.vavs.filter(function (vav) {
         return vav.sensorType === 'Room Setpoint';
       });
       roomSetpoints.forEach(function (roomSetpoint) {
         self.roomSetpointData[roomSetpoint.sensorDeviceId] = roomSetpoint.data;
+      });
+
+      var damperAngles = response.data.vavs.filter(function (vav) {
+        return vav.sensorType === 'Damper Position';
+      });
+      damperAngles.forEach(function (damperAngle) {
+        self.damperAngles[damperAngle.sensorDeviceId] = damperAngle.data;
       });
 
       LoadingService.makingRequest = false;
@@ -50,10 +58,10 @@ app.service('FloorDataService', function (LoadingService, $http, $q) {
   self.getWeatherData = function getWeatherData() {
     return $http.get('http://bpl.dev.cisdd.org/api/weather').then(function (response) {
       self.weatherData = {};
-      let weatherResponse = response.data;
+      var weatherResponse = response.data;
 
       for (let i = 0; i < weatherResponse.length; ++i) {
-        let date = weatherResponse[i].stime,
+        var date = weatherResponse[i].stime,
             temp = weatherResponse[i].temp;
         self.weatherData[date] = temp;
       }
@@ -66,7 +74,7 @@ app.service('FloorDataService', function (LoadingService, $http, $q) {
 
     var promises = [
       self.getCoordinates(floorLevel),
-      self.getAllData(floorLevel),
+      self.getRoomData(floorLevel),
       self.getWeatherData()
     ];
 
