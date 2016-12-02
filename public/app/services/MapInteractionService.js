@@ -32,6 +32,12 @@ app.service('MapInteractionService', function (TableToMapService, FloorDataServi
             var coordinates = FloorDataService.roomCoordinates[FloorDataService.vavs[vav][i]];
             var layer = self.getMarkerType(coordinates, color, temp, roomSetpoint, damperAngle, map.getZoom());
 
+            if (damperAngle) {
+              var stripes = new L.stripePattern({ angle: damperAngle, weight: 2, color: color });
+              stripes.addTo(map);
+              layer.options.fillPattern = stripes;
+            }
+
             if (!self.vectorLayers.hasOwnProperty(vav)) {
               self.vectorLayers[vav] = [];
             }
