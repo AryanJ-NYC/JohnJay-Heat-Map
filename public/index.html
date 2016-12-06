@@ -38,20 +38,26 @@
             </div>
 
             <div ng-controller="MovieController" id="movie-controller-block" class="row">
-
-                <button class="btn btn-secondary col-md-4 movie-block-element"
-                        ng-click='startAnimation()' ng-disabled='!isStopped || loaderStatus()'>
-                    <i class="fa fa-play"></i>
-                </button>
-                <button class="btn btn-secondary col-md-4 movie-block-element"
-                        ng-click='$root.stopAnimation()' ng-disabled='isStopped'>
-                    <i class="fa fa-pause"></i>
-                </button>
-                <button class="btn btn-secondary col-md-4 movie-block-element"
-                        ng-click='restartAnimation()' ng-disabled='!isStopped || loaderStatus()'>
-                    <i class="fa fa-refresh"></i>
-                </button>
-
+              <button class="btn btn-secondary col-md-4 movie-block-element"
+                      ng-click='startAnimation()' ng-disabled='!isStopped || loaderStatus()'>
+                <i class="fa fa-play"></i>
+              </button>
+              <button class="btn btn-secondary col-md-4 movie-block-element"
+                      ng-click='$root.stopAnimation()' ng-disabled='isStopped'>
+                <i class="fa fa-pause"></i>
+              </button>
+              <button class="btn btn-secondary col-md-4 movie-block-element"
+                      ng-click='restartAnimation()' ng-disabled='!isStopped || loaderStatus()'>
+                <i class="fa fa-refresh"></i>
+              </button>
+              <select ng-init="interval = 500" class="form-control">
+                <option disabled selected>Animation Speed</option>
+                <option value="500">1</option>
+                <option value="400">2</option>
+                <option value="250">3</option>
+                <option value="100">4</option>
+                <option value="50">5</option>
+              </select>
             </div>
 
             <div ng-controller="DropDownController" class="marker-drop-down">

@@ -7,7 +7,7 @@ function movieController($scope, $interval, FloorDataService, MapInteractionServ
                          LoadingService, $rootScope) {
 
     $scope.isStopped = true;
-    $scope.interval = 50; // refresh rate for animation
+    $scope.interval; // refresh rate for animation
 
     // index for run movie
     $scope.startDateIndex = 0;
