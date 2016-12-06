@@ -82,13 +82,14 @@ app.service('MapInteractionService', function (TableToMapService, FloorDataServi
     if ($rootScope.marker_type === 'Circles') {
       var latlng = L.latLng((coordinates[0][0] + coordinates[1][0]) / 2, (coordinates[0][1] + coordinates[1][1]) / 2);
 
-      // if zoom == 0
-      var radius = ((TableToMapService.getIndexOfColor(color) + 1) * 5) * .6;
+      // setpoint ranges from 63 to 78
+      var radius = currentSetpoint - 60;
 
+      // radius must change to correspond with zoom
       if (zoom == 1) {
-        radius = ((TableToMapService.getIndexOfColor(color) + 1) * 5) * 1.2;
+        radius = (radius) * 2;
       } else if (zoom == 2) {
-        radius = ((TableToMapService.getIndexOfColor(color) + 1) * 5) * 2.4;
+        radius = (radius) * 4;
       }
 
       return new L.circleMarker(latlng, object).setRadius(radius).bindPopup(popup);

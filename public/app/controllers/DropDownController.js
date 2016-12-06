@@ -4,7 +4,7 @@ dropDownController.$inject = ['$scope', 'MapInteractionService', 'LoadingService
 
 function dropDownController($scope, MapInteractionService, LoadingService, $rootScope) {
     // variables for markers and data being shown
-    $rootScope.marker_type = 'Squares';
+    $rootScope.marker_type = 'Circles';
     $rootScope.marker_options = 'Temp';
 
     $scope.updateMarkers = function () {
