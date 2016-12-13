@@ -2,7 +2,6 @@
   "name": "HeatMap",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
   "repository": {
     "type": "git",
     "url": "git@github.com:KevinRamsunder/JohnJay-Heat-Map.git"
@@ -14,23 +13,26 @@
     "angular-daterangepicker": "^0.2.2",
     "angular-leaflet-directive": "^0.10.0",
     "angular-messages": "^1.5.5",
-    "async": "^1.5.2",
+    "async": "^2.1.2",
     "body-parser": "^1.15.0",
     "bootstrap": "^3.3.6",
     "bootstrap-colorpicker": "^2.3.3",
     "bootstrap-daterangepicker": "^2.1.19",
     "csv": "^0.4.6",
-    "express": "^4.13.4",
+    "express": "^4.14.0",
     "font-awesome": "^4.6.1",
     "jquery": "^2.2.3",
     "leaflet": "^1.0.1",
-    "request": "^2.69.0"
+    "mysql": "^2.12.0",
+    "redis": "^2.6.3",
+    "request": "^2.69.0",
+    "squel": "^5.5.0"
   },
   "devDependencies": {
     "jshint": "^2.9.2"
   },
   "scripts": {
-    "start": "node node/server.js",
+    "start": "nodejs node/server.js",
     "cisdd-start": "nodejs node/server.js"
   },
   "author": "",

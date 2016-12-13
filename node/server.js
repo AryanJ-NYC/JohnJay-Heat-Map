@@ -1,6 +1,9 @@
 // include 'express' - a web framework for Node
-var express = require('express');
-var app = express();
+const express = require('express'),
+      app = express(),
+      mySqlDB = require('./config/databases/mySqlConnection.js'),
+      mySqlConnectionPool = mySqlDB.connectionPool,
+      port = process.env.PORT || 8000;
 
 // utility to read and write to files
 var fs = require('fs');
@@ -15,14 +18,14 @@ var async = require('async');
 var bodyParser = require('body-parser');
 app.use(bodyParser.json());
 
+// error handler
+app.use(function (err, req, res, next) {
+  res.status(err.status || 500);
+  res.json({ error: { message: err.message }});
+});
+
 // use this directory to serve static files
 app.use(express.static('public'));
-
-// make the server run on port 8000, localhost:8000
-var port = process.env.PORT || 8000;
-app.listen(port, function () {
-  console.log("listening on port " + port);
-});
 
 app.use('/node/data', express.static('node/data'));
 
@@ -44,9 +47,12 @@ app.use('/styles', express.static(nodeDir + '/font-awesome'));
 
 // scripts and styles
 app.use('/assets', express.static(nodeDir + '/bootstrap-daterangepicker'));
-app.use('/assets', express.static(nodeDir + '/bootstrap-colorpicker/dist/'));
+app.use('/assets', express.static(nodeDir + '/bootstrap-colorpicker/dist'));
 app.use('/assets', express.static(nodeDir + '/leaflet/dist'));
 app.use('/assets', express.static(appDir));
+
+const routes = require('./routes/routes');
+app.use('/api', routes);
 
 // get rooms data
 app.post('/api/v1/rooms-data', function (req, res) {
@@ -55,42 +61,42 @@ app.post('/api/v1/rooms-data', function (req, res) {
     var url = 'node/data/' + req.body.floorLevel;
 
     fs.readFile(url + '/vavs.json', 'utf-8', function (err, data) {
-        var vavs = Object.keys(JSON.parse(data)); // ['47101, 47102, ...']
+      var vavs = Object.keys(JSON.parse(data)); // ['47101, 47102, ...']
 
-        async.whilst(
-            function () {
-                return count < vavs.length;
-            },
+      async.whilst(
+        function () {
+          return count < vavs.length;
+        },
 
-            function (callback) {
-                fs.readFile(url + '/inside_temp/Room' + vavs[count] + '.csv', 'utf-8', function (err, data) {
-                    if (err) {
-                        console.log(err);
-                    } else {
+        function (callback) {
+          fs.readFile(url + '/inside_temp/Room' + vavs[count] + '.csv', 'utf-8', function (err, data) {
+            if (err) {
+                console.log(err);
+            } else {
 
-                        // [date1, temp1, date2, temp2, ...]
-                        var listData = data.split(',').map(function (i) {
-                            return i.trim()
-                        });
+              // [date1, temp1, date2, temp2, ...]
+              var listData = data.split(',').map(function (i) {
+                return i.trim()
+              });
 
-                        // {date1: temp1, date2: temp2, ...]
-                        var floorData = {};
-                        for (var i = 0; i < listData.length - 1; i += 2) {
-                            floorData[listData[i]] = listData[i + 1];
-                        }
+              // {date1: temp1, date2: temp2, ...]
+              var floorData = {};
+              for (var i = 0; i < listData.length - 1; i += 2) {
+                floorData[listData[i]] = listData[i + 1];
+              }
 
-                        roomData[vavs[count]] = floorData;
-                    }
-
-                    count++;
-                    callback();
-                });
-            },
-
-            function () {
-                res.send(roomData);
+              roomData[vavs[count]] = floorData;
             }
-        );
+
+            count++;
+            callback();
+          });
+        },
+
+        function () {
+          res.send(roomData);
+        }
+      );
     });
 });
 
@@ -109,7 +115,21 @@ app.post('/api/v1/coordinates', function (req, res) {
 
 // get weather data
 app.get('/api/v1/weather-data', function (req, res) {
-    fs.readFile('node/data/weather-data/weather.json', 'utf-8', function (err, data) {
-        res.send(data);
-    });
+  fs.readFile('node/data/weather-data/weather.json', 'utf-8', function (err, data) {
+    res.send(data);
+  });
+});
+
+app.get('/', function (req, res) {
+  res.sendFile(path.join(__dirname, '../public/index'))
+});
+
+app.listen(port, function () {
+  console.log(`App running on port: ${port}`);
+});
+
+process.on('SIGTERM', function () {
+  mySqlConnectionPool.end(function () {
+    console.log('Connection to mySqlDB terminated.');
+  });
 });
