@@ -9,4 +9,8 @@ client.on('error', function (err) {
   console.error('Error: ' + err.message);
 });
 
+client.on('end', function () {
+  console.log('Redis connection closed');
+});
+
 module.exports = client;

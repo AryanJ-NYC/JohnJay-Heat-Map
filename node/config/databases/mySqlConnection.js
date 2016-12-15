@@ -9,4 +9,3 @@ const config = require('../config'),
       });
 
 exports.connectionPool = connectionPool;
-exports.QUERY_LIMIT = 500;

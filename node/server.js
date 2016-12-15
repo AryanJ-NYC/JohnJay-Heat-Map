@@ -128,8 +128,9 @@ app.listen(port, function () {
   console.log(`App running on port: ${port}`);
 });
 
-process.on('SIGTERM', function () {
+process.on('SIGINT', function () {
   mySqlConnectionPool.end(function () {
     console.log('Connection to mySqlDB terminated.');
+    process.exit(0);
   });
 });
